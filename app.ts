@@ -3,6 +3,7 @@ const morgan = require('morgan')
 const swaggerJsDoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
 const AuthRouter = require('./routes/users')
+const ExpensesRouter = require('./routes/expenses')
 const swaggerSchemas = require('./swaggerSchemas')
 const app = express()
 // Swagger Ui
@@ -46,6 +47,6 @@ if(process.env.NODE_ENV === "development"){
 app.use(express.json())
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs))
 app.use('/api/v1/auth',AuthRouter)
-
+app.use('/api/v1/expenses',ExpensesRouter)
 
 module.exports = app

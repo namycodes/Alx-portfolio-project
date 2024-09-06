@@ -1,9 +1,9 @@
 const {AppError} = require("./errorController")
 const jsonwebtoken = require('jsonwebtoken')
 const User = require("../models/users")
-
+const jwt = require("jsonwebtoken")
 const MAX_AGE = process.env.MAX_AGE
-
+const {promisify} = require('util')
 const Sign_JWT = async(_id:string)=>{
     return  await jsonwebtoken.sign({_id},process.env.JWT_SECRET_KEY,{
         expiresIn: MAX_AGE
@@ -56,10 +56,57 @@ exports.SignIn = async(req:any,res:any)=>{
     }catch(err){
         return res.status(500).json({
             status:'fail',
-            message:'Internal Server Error',
+            message:'Internal Server Error',  
             
         })
     }
    
     
+}
+
+exports.protect=async(req:any,res:any,next:any)=>{
+    let token;
+    try{
+        
+        if(req.headers.authorization && req.headers.authorization.startsWith("Bearer")){
+            token = req.headers.authorization.split(' ')[1]
+        }
+        if(!token){
+             return res.status(401).json({
+                status:'fail',
+                message: 'Unauthorized'
+            })
+        }
+        let decoded;
+        try{
+            decoded = await promisify(jwt.verify)(token,process.env.JWT_SECRET_KEY)
+        }catch(error){
+            return res.status(500).json({
+                status:'fail',
+                message:'Internal Server Error',
+                error
+            })
+        }
+       
+        const freshUser = await User.findById(decoded._id)
+        if(!freshUser){
+            return res.status(404).json({
+                status:'fail',
+                message:"user does not exist"
+            })
+        }
+        if(!freshUser.changedPasswordAfter(decoded.iat)){
+            return res.status(401).json({
+                status:'fail',
+                message:'Unathorised'
+            })
+        }
+        req.User = freshUser
+        next()
+    }catch(error){
+        return res.status(500).json({
+            status:'fail',
+            message:'Internal Server Error'
+        })
+    }
 }
