@@ -5,10 +5,7 @@ const ExpensesSchema = new mongoose.Schema({
         minlength: [3,"Title of expense should at least be 3 character long"],
         required:[true, "Title is a required field"]
     },
-    income:{
-        type: Number,
-        required:[true, "Income is a required field"]
-    },
+  
     expenseAmount:{
         type: Number,
         required: [true, "Expense amount is a required field"]
@@ -32,5 +29,5 @@ const ExpensesSchema = new mongoose.Schema({
 
 
 
-const Expenses = mongoose.model("expenes", ExpensesSchema)
+const Expenses = mongoose.model("expenses", ExpensesSchema)
 module.exports = Expenses

@@ -19,7 +19,7 @@ exports.getAllUserExpenses=async(req,res)=>{
 }
 
 exports.createExpense=async(req,res)=>{
-    const {title,income,expenseAmount,dateOfExpense,description} = req.body
+    const {title,expenseAmount,dateOfExpense,description} = req.body
     const {userId} = req.params
     try{
         if(!userId){
@@ -29,7 +29,7 @@ exports.createExpense=async(req,res)=>{
             })
         }
         const newExpense = await Expenses.create({
-            title,income,expenseAmount,dateOfExpense,description,userId
+            title,expenseAmount,dateOfExpense,description,userId
         })
         return res.status(201).json({
             status:'Expense created successfully',
@@ -40,7 +40,8 @@ exports.createExpense=async(req,res)=>{
     }catch(error){
         return res.status(500).json({
             status:'fail',
-            message: "Internal server Error"
+            message: "Internal server Error",
+            error
         })
     }
 }
