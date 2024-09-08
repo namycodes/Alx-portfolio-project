@@ -1,8 +1,10 @@
 const Expenses = require("../models/expenses")
+const AppFeatures = require('../utils/appFeatures')
 exports.getAllUserExpenses=async(req,res)=>{
     const {userId} = req.params
     try{
-        const expenses = await Expenses.find({userId}).select('-userId').sort('createdAt')
+        const AppFeature = new AppFeatures(Expenses.find({userId}), req.query).paginate().sort()
+        const expenses = await  AppFeature.query
         return res.status(200).json({
             status:'success',
             data:{
@@ -12,7 +14,8 @@ exports.getAllUserExpenses=async(req,res)=>{
     }catch(error){
         return res.status(500).json({
             status:'fail',
-            message:'Internal Server Error'
+            message:'Internal Server Error',
+            error
         })
     }
     
