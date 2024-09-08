@@ -4,6 +4,7 @@ const swaggerJsDoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
 const AuthRouter = require('./routes/users')
 const ExpensesRouter = require('./routes/expenses')
+const PreferencesRouter = require('./routes/preferences')
 const swaggerSchemas = require('./swaggerSchemas')
 const app = express()
 // Swagger Ui
@@ -48,5 +49,6 @@ app.use(express.json())
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs))
 app.use('/api/v1/auth',AuthRouter)
 app.use('/api/v1/expenses',ExpensesRouter)
+app.use('/api/v1/preferences',PreferencesRouter)
 
 module.exports = app
